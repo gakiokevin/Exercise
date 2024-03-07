@@ -129,7 +129,7 @@ return res.json({
   username:user.username,
   count: exercises.length,
   _id:user._id,
-  log:log
+  log:log,
  })
 }
 )
