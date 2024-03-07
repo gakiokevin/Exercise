@@ -115,14 +115,16 @@ if(!user){
   }
   if(from || to){
     filter.date = dateObj
-  
-const exercises = await Exercise.find(filter).limit(+limit ?? 500)
+  }
+ const exercises = await Exercise.find(filter).limit(+limit ?? 500)
+
 const log = exercises.map(e =>({
   description:e.description,
   duration: e.duration,
   date: e.date.toDateString()
 
 }))
+
 return res.json({
   username:user.username,
   count: exercises.length,
@@ -130,8 +132,7 @@ return res.json({
   log:log
  })
 }
-
-})
+)
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
