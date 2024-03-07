@@ -1,5 +1,4 @@
 const express = require('express')
-const app = express()
 const cors = require('cors')
 const moongose = require('mongoose')
 const { Schema } =  moongose
@@ -7,6 +6,7 @@ require('dotenv').config()
 
 moongose.connect(process.env.MONGO_URI);
 
+const app = express()
 const db = moongose.connection;
 
 db.on('error', (err) => {
@@ -59,7 +59,6 @@ const userObj = new User({
 })
 try{
   const user = await userObj.save()
-  console.log(user)
   res.json(user)
 }catch(error){
   console.log(error)
@@ -98,25 +97,25 @@ app.post('/api/users/:_id/exercises',async (req,res)=>{
 })
 
 app.get('/api/users/:_id/logs',async (req,res)=>{
-const { from , to, limit } = req.query
 const id =  req.params._id
+const { from ,to, limit } = req.query
 const user = await User.findById(id)
 if(!user){
   res.send('no user with such id')
-  return
-}else {
+  return;
+}
   let dateObj = {}
   if(from){
-    dateObj['#gte'] = new Date(from)
+    dateObj['$gte'] = new Date(from)
   } if(to){
-    dateObj['#lte'] = new Date(to)
+    dateObj['$lte'] = new Date(to)
   }
   let filter = {
     user_id: id
   }
   if(from || to){
     filter.date = dateObj
-  }
+  
 const exercises = await Exercise.find(filter).limit(+limit ?? 500)
 const log = exercises.map(e =>({
   description:e.description,
@@ -128,7 +127,6 @@ return res.json({
   username:user.username,
   count: exercises.length,
   _id:user._id,
-
   log:log
  })
 }
